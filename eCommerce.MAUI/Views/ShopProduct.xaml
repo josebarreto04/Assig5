@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="eCommerce.MAUI.Views.ShopProduct"
+             Title="ShopProduct">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <ListView ItemsSource="{Binding CartContents}" >
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout>
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding Price}" />
+                                
+
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Label Text="Total Of Cart"/>
+            <Label Text="{Binding PriceTotal}"/>
+            <Button Text="Checkout" Clicked="CheckoutFromCart"/>
+            <Button Text="Go back to Shop Menu" Clicked="CancelClicked"/>
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
