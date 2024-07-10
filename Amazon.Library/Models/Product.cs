@@ -16,5 +16,7 @@ namespace Amazon.Library.Models
         public int Id { get; set; }
 
         public int Quantity { get; set; }
+        public bool IsBuyOneGetOneFree { get; set; }
+        public decimal Discount { get; set; }
     }
 }

@@ -1,18 +1,16 @@
-using Amazon.Library.Models;
 using eCommerce.MAUI.ViewModels;
+
 namespace eCommerce.MAUI.Views;
 
-public partial class ShopProduct : ContentPage
+public partial class Cart2 : ContentPage
 {
-    //private Cart2ViewModel cartViewModel2;
-
-    public ShopProduct()
-    {
+	public Cart2()
+	{
         InitializeComponent();
-        BindingContext = new CartViewModel();
-            
+		BindingContext = new Cart2ViewModel();
+		
 
-    }
+	}
     private void CancelClicked(object sender, EventArgs e)
     {
         Shell.Current.GoToAsync("//Shop");
@@ -20,14 +18,11 @@ public partial class ShopProduct : ContentPage
 
     private void TaxesClicked(object sender, EventArgs e)
     {
-        (BindingContext as CartViewModel)?.ApplyTaxRate();
+        (BindingContext as Cart2ViewModel)?.ApplyTaxRate();
     }
     private void CheckoutClicked(object sender, EventArgs e)
     {
-        (BindingContext as CartViewModel)?.Checkout();
-
+        (BindingContext as Cart2ViewModel)?.Checkout();
+        
     }
 }
-
-   
-

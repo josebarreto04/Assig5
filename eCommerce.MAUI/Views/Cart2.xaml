@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="eCommerce.MAUI.Views.ShopProduct"
-             Title="ShopProduct">
+             x:Class="eCommerce.MAUI.Views.Cart2"
+             Title="Cart2">
     <ContentPage.Content>
         <StackLayout>
             <!-- Cart Contents ListView -->
-            <ListView ItemsSource="{Binding CartContents}" 
-                      SelectedItem="{Binding SelectedProduct}">
+            <ListView ItemsSource="{Binding CartContentsTwo}" 
+                  SelectedItem="{Binding SelectedProduct}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -17,11 +17,11 @@
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
-                    
+
                 </ListView.ItemTemplate>
 
             </ListView>
-           
+
             <!-- Grid for Cart Summary -->
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -38,16 +38,17 @@
                 <Label Text="Total Of Cart" Grid.Column="0" Grid.Row="0"/>
                 <Label Text="{Binding PriceTotal}" Grid.Column="1" Grid.Row="0"/>
 
-                
+
                 <Button Text="Apply Taxes" Clicked="TaxesClicked" Grid.Column="0" Grid.Row="1"/>
                 <Entry Text="{Binding TaxRate}" Grid.Column="1" Grid.Row="1"/>
 
                 <Button Text="Checkout" Clicked="CheckoutClicked" Grid.Column="0" Grid.Row="2"/>
                 
+                
                 <Button Text="Go back to Shop Menu" Clicked="CancelClicked" Grid.Column="0" Grid.Row="3"/>
             </Grid>
-          
-           
+
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

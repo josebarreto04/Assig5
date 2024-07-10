@@ -28,5 +28,10 @@
         Title="AddShop"
         ContentTemplate="{DataTemplate views:ShopProduct}"
         Route="AddShop" />
+    <ShellContent
+    Title="Cart2"
+    ContentTemplate="{DataTemplate views:Cart2}"
+    Route="Cart2" />
+
 
 </Shell>

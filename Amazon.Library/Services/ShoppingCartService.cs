@@ -1,4 +1,5 @@
 ﻿using Amazon.Library.Models;
+using Amazon.Library.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,27 +11,44 @@ namespace Amazon.Library.Services
 {
     public class ShoppingCartService
     {
-      
+
         private static ShoppingCartService? instance;
         private static object instanceLock = new object();
 
         private ObservableCollection<ShoppingCart> carts = new ObservableCollection<ShoppingCart>();
-
+        private ObservableCollection<ShoppingCart> carts2 = new ObservableCollection<ShoppingCart>();
         public ShoppingCart Cart
         {
             get
             {
-                if(carts == null || !carts.Any())
+                if (carts == null || !carts.Any())
                 {
-                    var newCart= new ShoppingCart() { Id=1, Contents= new ObservableCollection<Product>() };
+                    var newCart = new ShoppingCart() { Id = 1, Contents = new ObservableCollection<Product>() };
                     carts.Add(newCart);
                     return newCart;
                 }
                 return carts.First();
             }
         }
+        public ShoppingCart Cart2
+        {
+            get
+            {
+                if (carts2 == null || !carts2.Any())
+                {
+                    var newCart = new ShoppingCart() { Id = 1, Contents2 = new ObservableCollection<Product>() };
+                    carts2.Add(newCart);
+                    return newCart;
+                }
+                return carts2.First();
+            }
+        }
 
-        private ShoppingCartService() { }
+        private ShoppingCartService()
+        {
+           
+
+        }
 
         public static ShoppingCartService Current
         {
@@ -50,14 +68,50 @@ namespace Amazon.Library.Services
         public void AddToCart(Product newProduct)
         {
             if (newProduct == null) return;
-            var existingProduct= Cart.Contents.FirstOrDefault(p=>p.Id==newProduct.Id);
+            var existingProduct = Cart.Contents.FirstOrDefault(p => p.Id == newProduct.Id);
             var inventoryProduct = InventoryServiceProxy.Current.Products.FirstOrDefault(p => p.Id == newProduct.Id);
             if (inventoryProduct == null || inventoryProduct.Quantity < 1)
             {
                 return;
             }
-            Cart.Contents.Add(newProduct);
-            --inventoryProduct.Quantity;
+
+            if (inventoryProduct.IsBuyOneGetOneFree)
+            {
+                Cart.Contents.Add(newProduct);
+                --inventoryProduct.Quantity;
+                Cart.Contents.Add(newProduct);
+                --inventoryProduct.Quantity;
+            }
+            else
+            {
+                Cart.Contents.Add(newProduct);
+                --inventoryProduct.Quantity;
+            }
+
+        }
+        public void AddToCart2(Product newProduct)
+        {
+            if (newProduct == null) return;
+            var existingProduct = Cart2.Contents2.FirstOrDefault(p => p.Id == newProduct.Id);
+            var inventoryProduct = InventoryServiceProxy.Current.Products.FirstOrDefault(p => p.Id == newProduct.Id);
+            if (inventoryProduct == null || inventoryProduct.Quantity < 1)
+            {
+                return;
+            }
+
+            if (inventoryProduct.IsBuyOneGetOneFree)
+            {
+                Cart2.Contents2.Add(newProduct);
+                --inventoryProduct.Quantity;
+                Cart2.Contents2.Add(newProduct);
+                --inventoryProduct.Quantity;
+            }
+            else
+            {
+                Cart2.Contents2.Add(newProduct);
+                --inventoryProduct.Quantity;
+            }
+
         }
 
         public void DeleteFromCart(Product productToDelete)
@@ -81,7 +135,9 @@ namespace Amazon.Library.Services
                 Cart.Contents.Remove(existingProduct);
             }
         }
-    }
 
+    }
 }
+
+
 

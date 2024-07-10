@@ -1,34 +1,31 @@
 ﻿using Amazon.Library.Models;
 using Amazon.Library.Services;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace eCommerce.MAUI.ViewModels
 {
-    class CartViewModel : INotifyPropertyChanged
+     public class Cart2ViewModel : INotifyPropertyChanged
     {
-        private ShoppingCart cart;
-        
-        public ShoppingCart Cart
+        private ShoppingCart carttwo;
+
+        public ShoppingCart CartTwo
         {
 
-            get { return cart; }
+            get { return carttwo; }
             set
             {
-                if (cart != value)
+                if (carttwo != value)
                 {
-                    cart = value;
+                    carttwo = value;
                     NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(CartContents));
+                    NotifyPropertyChanged(nameof(CartContentsTwo));
                     NotifyPropertyChanged(nameof(PriceTotal));
 
 
@@ -36,24 +33,23 @@ namespace eCommerce.MAUI.ViewModels
             }
         }
 
-        
-        public ObservableCollection<Product> CartContents
+
+        public ObservableCollection<Product> CartContentsTwo
         {
-            get { return Cart.Contents; }
+            get { return CartTwo.Contents2; }
         }
 
-        public CartViewModel()
+        public Cart2ViewModel()
         {
-            Cart = ShoppingCartService.Current.Cart;
-          
-            Cart.Contents.CollectionChanged += (s, e) =>
-                {
-                    NotifyPropertyChanged(nameof(CartContents));
-                    NotifyPropertyChanged(nameof(PriceTotal));
-                };
-            
+            CartTwo = ShoppingCartService.Current.Cart2;
+
+            CartTwo.Contents2.CollectionChanged += (s, e) =>
+            {
+                NotifyPropertyChanged(nameof(CartContentsTwo));
+                NotifyPropertyChanged(nameof(PriceTotal));
+            };
         }
-        
+
         public event PropertyChangedEventHandler? PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -77,7 +73,7 @@ namespace eCommerce.MAUI.ViewModels
                 int countBogoPairs = 0;
                 bool skipNext = false;
 
-                foreach (var product in Cart.Contents)
+                foreach (var product in CartTwo.Contents2)
                 {
                     if (skipNext)
                     {
@@ -119,13 +115,16 @@ namespace eCommerce.MAUI.ViewModels
             await App.Current.MainPage.DisplayAlert("Checkout Complete", checkoutMessage, "OK");
 
             // Clear cart contents after checkout (example: simulate clearing cart)
-            Cart.Contents.Clear();
+            CartTwo.Contents2.Clear();
 
             // Notify UI of changes after checkout
-            NotifyPropertyChanged(nameof(CartContents));
+            NotifyPropertyChanged(nameof(CartContentsTwo));
             NotifyPropertyChanged(nameof(PriceTotal));
         }
+        
+    }
+
 
     }
 
-}
+

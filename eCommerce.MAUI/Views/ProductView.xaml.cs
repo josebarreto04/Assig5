@@ -28,4 +28,19 @@ public partial class ProductView : ContentPage
     {
         BindingContext = new ProductViewModel(ProductId);
     }
+    private void CheckBoxClicked(object sender, EventArgs e)
+    {
+        CheckBox checkbox = (CheckBox)sender;
+        if (checkbox.IsChecked == true)
+        {
+            (BindingContext as ProductViewModel)?.BuyOneGetOneFree();
+        }
+    }
+    private void MarkDownClicked(object sender, EventArgs e)
+    {
+        (BindingContext as ProductViewModel)?.ApplyMarkDown();
+        Shell.Current.GoToAsync("//Inventory");
+
+    }
+
 }

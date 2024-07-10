@@ -4,61 +4,68 @@
              x:Class="eCommerce.MAUI.Views.ShopView"
              Title="Shop"
              NavigatedTo="ContentPage_NavigatedTo" >
+   
     <ScrollView>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Entry Grid.Column ="0" Grid.Row="0"
-                   Text="{Binding InventoryList}"/>
+            <Entry Grid.Column="0" Grid.Row="0"
+                   Text="{Binding InventoryList}" />
+
             <ListView Grid.Row="1" Grid.ColumnSpan="10"
-                     ItemsSource="{Binding Products}"
-                     SelectedItem="{Binding SelectedProduct}">
+                      ItemsSource="{Binding Products}"
+                      SelectedItem="{Binding SelectedProduct}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0"
-                           Text="{Binding Name}"/>
-                    <Label Grid.Column="1"
-                           Text="{Binding Quantity}"/>
-                    <Label Grid.Column="2"
-                            Text="{Binding DisplayPrice}"/>
-                    
-                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0"
+                                       Text="{Binding Name}" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Quantity}" />
+                                <Label Grid.Column="2"
+                                       Text="{Binding DisplayPrice}" />
+                                <Label Grid.Column="3"
+                                       Text="{Binding IsBuyOneGetOneFree}" />
+                                <Button Grid.Column="4"
+                                        Text="Add Product"
+                                        Clicked="AddToCartClicked" />
                                 <Button Grid.Column="5"
-                                    Text="Add Product"
-                                    Clicked="AddToCartClicked"/>
+                                        Text="Add Product to cart 2"
+                                        Clicked="AddToCartClicked2" />
+                               
                             </Grid>
-
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            
-            <Button Grid.Column="3"
+            <Button Grid.Row="3" Grid.Column="0"
+                    Text="Go to Cart"
+                    Clicked="ShopCartClicked" />
+            <Button Grid.Row="3" Grid.Column="2"
+                 Text="Go to second Cart"
+                Clicked="Cart2Clicked" />
+            <Button Grid.Row="3" Grid.Column="3"
                     Text="Go back to menu"
-                    Clicked="CancelClicked"/>
-            <Button Grid.Column="0"
-                Text="Go to Cart"
-                Clicked="ShopCartClicked"/>
+                    Clicked="CancelClicked" />
         </Grid>
     </ScrollView>
 </ContentPage>

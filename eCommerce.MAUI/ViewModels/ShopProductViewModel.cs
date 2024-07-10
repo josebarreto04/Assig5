@@ -1,5 +1,6 @@
 ﻿using Amazon.Library.Models;
 using Amazon.Library.Services;
+
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -10,22 +11,26 @@ namespace eCommerce.MAUI.ViewModels
     public class ShopProductViewModel : INotifyPropertyChanged
     {
         private string inventoryList;
+ 
         public event PropertyChangedEventHandler? PropertyChanged;
+
         public ShopProductViewModel()
         {
-           InventoryList = string.Empty;
+            InventoryList = string.Empty;
 
         }
-       public string InventoryList
+
+        public string InventoryList
         {
             set
             {
                 inventoryList = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(Products));
             }
             get { return inventoryList; }
         }
-        
+
         public ProductViewModel? SelectedProduct { get; set; }
 
         public void AddToCartInShop()
@@ -34,6 +39,10 @@ namespace eCommerce.MAUI.ViewModels
             if (SelectedProduct?.Product == null)
             {
                 return;
+            }
+            if (SelectedProduct.IsBuyOneGetOneFree)
+            {
+                SelectedProduct.BuyOneGetOneFree();
             }
 
             ShoppingCartService.Current.AddToCart(SelectedProduct.Product);
@@ -45,9 +54,34 @@ namespace eCommerce.MAUI.ViewModels
             NotifyPropertyChanged(nameof(Products));
             NotifyPropertyChanged(nameof(PriceTotal));
             NotifyPropertyChanged(nameof(CartContent));
-            
+
         }
-      
+        public void AddToCartInShop2()
+        {
+
+            if (SelectedProduct?.Product == null)
+            {
+                return;
+            }
+            if (SelectedProduct.IsBuyOneGetOneFree)
+            {
+                SelectedProduct.BuyOneGetOneFree();
+            }
+
+            ShoppingCartService.Current.AddToCart2(SelectedProduct.Product);
+            if (SelectedProduct?.Quantity < 1)
+            {
+                SelectedProduct.Quantity = 0;
+                return;
+            }
+            NotifyPropertyChanged(nameof(Products));
+            NotifyPropertyChanged(nameof(PriceTotal));
+            NotifyPropertyChanged(nameof(CartContent2));
+
+        }
+
+
+
         public void Refresh()
         {
             NotifyPropertyChanged(nameof(Products));
@@ -76,9 +110,11 @@ namespace eCommerce.MAUI.ViewModels
                 cart = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(CartContent));
+                NotifyPropertyChanged(nameof(PriceTotal));
             }
         }
-        
+
+
         public ObservableCollection<Product> CartContent
         {
             get
@@ -86,13 +122,26 @@ namespace eCommerce.MAUI.ViewModels
                 return ShoppingCartService.Current.Cart.Contents;
             }
         }
-        public decimal PriceTotal
+        public ObservableCollection<Product> CartContent2
         {
             get
             {
-                return SecondCart.Contents?.Sum(c => c.Price) ?? 0;
+                return ShoppingCartService.Current.Cart2.Contents;
             }
         }
+        public ShoppingCart SecondCart2
+        {
+            get { return ShoppingCartService.Current.Cart2; }
+            set
+            {
+                cart = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(CartContent2));
+                NotifyPropertyChanged(nameof(PriceTotal));
+            }
+        }
+        public decimal PriceTotal => cart.Contents?.Sum(c => c.Price) ?? 0;
+      
 
     }
 }

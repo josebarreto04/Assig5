@@ -26,19 +26,46 @@ namespace eCommerce.MAUI.ViewModels
                     NotifyPropertyChanged(nameof(Quantity));
                     NotifyPropertyChanged(nameof(DisplayPrice));
                     NotifyPropertyChanged(nameof(PriceAsString));
+                    NotifyPropertyChanged(nameof(IsBuyOneGetOneFree));
+                    NotifyPropertyChanged(nameof(Discount));
+
 
 
                 }
             }
         }
+        public bool IsBuyOneGetOneFree
+        {
+            get { return Product?.IsBuyOneGetOneFree ?? false; }
+            set
+            {
+                if (Product != null && Product.IsBuyOneGetOneFree != value)
+                {
+                    Product.IsBuyOneGetOneFree = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public string? Name
         {
-            get {return Product?.Name ?? string.Empty;}
+            get { return Product?.Name ?? string.Empty; }
             set
             {
                 if (Product != null && Product.Name != value)
                 {
-                    Product.Name= value;
+                    Product.Name = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        public decimal Discount
+        {
+            get { return Product?.Discount ?? 0; }
+            set
+            {
+                if (Product != null && Product.Discount != value)
+                {
+                    Product.Discount = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -113,13 +140,13 @@ namespace eCommerce.MAUI.ViewModels
         public ProductViewModel(int id)
         {
             Product = InventoryServiceProxy.Current?.Products?.FirstOrDefault(p => p.Id == id);
-           
+
             SetupCommands();
         }
         public ProductViewModel(Product p)
         {
 
-            Product = p ??  new Product(); 
+            Product = p ?? new Product();
             SetupCommands();
         }
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -156,15 +183,15 @@ namespace eCommerce.MAUI.ViewModels
         }
         public override string ToString()
         {
-            if(Product == null)
+            if (Product == null)
             {
                 return string.Empty;
             }
             return $"{Product.Id} - {Product.Name} - {Product.Price:C}";
         }
-        
 
-        
+
+
         public void SetupCommands()
         {
             EditCommand = new Command((p) => ExecuteEdit(p as ProductViewModel));
@@ -172,8 +199,8 @@ namespace eCommerce.MAUI.ViewModels
             DeleteCommand = new Command((p) => ExecuteAdd(p as ProductViewModel));
 
         }
-        
-        
+
+
         public string PriceAsString
         {
             set
@@ -182,11 +209,9 @@ namespace eCommerce.MAUI.ViewModels
                 {
                     return;
                 }
-                if(decimal.TryParse(value, out var price)) {
-                    Product.Price = price;
-                }else
+                if (decimal.TryParse(value, out var price))
                 {
-
+                    Product.Price = price;
                 }
             }
         }
@@ -197,6 +222,35 @@ namespace eCommerce.MAUI.ViewModels
                 InventoryServiceProxy.Current.AddOrUpdate(Product);
             }
         }
-        
+
+        public void BuyOneGetOneFree()
+        {
+            if (Product != null)
+            {
+                NotifyPropertyChanged(nameof(Quantity));
+            }
+
+        }
+     
+        public void ApplyMarkDown()
+        {
+
+            if (Product != null)
+            {
+                if (Discount < 0)
+                {
+                    Discount = 0;
+                }
+
+                else if (Discount > 100)
+                {
+                    Discount = 100;
+                }
+                decimal discountedPrice = Product.Price * (1 - (Discount / 100));
+                Product.Price = discountedPrice;
+                NotifyPropertyChanged(nameof(Product)); // Notify changes in the Product object
+                NotifyPropertyChanged(nameof(PriceAsString)); // Notify changes in the price representation
+            }
+        }
     }
 }

@@ -9,11 +9,16 @@ namespace Amazon.Library.Models
 {
     public class ShoppingCart
     {
-       public int Id { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public ObservableCollection<Product> Contents { get; set; }
-        public ShoppingCart() 
-        { 
+        public ObservableCollection<Product> Contents2 { get; set; }
+        public ShoppingCart()
+        {
             Contents = new ObservableCollection<Product>();
+            Contents2 = new ObservableCollection<Product>();
         }
+        
+    
     }
 }
