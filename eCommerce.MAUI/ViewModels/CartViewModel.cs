@@ -112,16 +112,13 @@ namespace eCommerce.MAUI.ViewModels
 
             string checkoutMessage = $"Checkout: Price: {totalPrice:C2}, Tax: {taxAmount:C2}, Total: {finalTotal:C2}";
 
-            // Display the checkout details in the console
+            
             Console.WriteLine(checkoutMessage);
 
-            // Display alert to notify user
             await App.Current.MainPage.DisplayAlert("Checkout Complete", checkoutMessage, "OK");
 
-            // Clear cart contents after checkout (example: simulate clearing cart)
             Cart.Contents.Clear();
 
-            // Notify UI of changes after checkout
             NotifyPropertyChanged(nameof(CartContents));
             NotifyPropertyChanged(nameof(PriceTotal));
         }
