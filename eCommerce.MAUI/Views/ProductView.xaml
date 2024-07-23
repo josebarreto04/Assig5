@@ -34,7 +34,8 @@
             <Entry Text="{Binding Product.Quantity}" Grid.Row="3" Grid.Column="2"/>
             
             <Label Text="percentage of Discount (%)" Grid.Row="4" Grid.Column="0"/>
-            <Button Text="Apply Markdon" Clicked="MarkDownClicked" Grid.Row ="4" Grid.Column="1"/>
+            <Button Text="Apply Markdon" Command="{Binding Path=ApplyDiscountCommand}"
+                    CommandParameter="{Binding}" Clicked="MarkDownClicked" Grid.Row ="4" Grid.Column="1"/>
             <Entry Text="{Binding Discount}" Grid.Row="4" Grid.Column="2"/>
             
             <Label Text="Make product Buy One Get One Free" Grid.Row="5" Grid.Column="0"/>

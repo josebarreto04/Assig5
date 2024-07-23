@@ -1,15 +1,13 @@
-﻿using eCommerce.Library.DTO;
+﻿using Amazon.Library.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
-namespace Amazon.Library.Models
+namespace eCommerce.Library.DTO
 {
-    public class Product
+    public class ProductDTO
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
@@ -19,29 +17,32 @@ namespace Amazon.Library.Models
         public int? Quantity { get; set; }
         public bool IsBuyOneGetOneFree { get; set; }
         public decimal Discount { get; set; }
-        
-      
 
-        public Product() { }
-        public Product(Product p)
+        public ProductDTO(Product p)
+        {
+            Name = p.Name;
+            Description = p.Description;    
+            Price = p.Price;
+            Id = p.Id;
+            Quantity = p.Quantity;
+            Discount= p.Discount;
+            IsBuyOneGetOneFree= p.IsBuyOneGetOneFree;
+        }
+        public ProductDTO(ProductDTO p)
         {
             Name = p.Name;
             Description = p.Description;
             Price = p.Price;
-            Quantity = p.Quantity;
             Id = p.Id;
+            Quantity = p.Quantity;
             Discount = p.Discount;
             IsBuyOneGetOneFree = p.IsBuyOneGetOneFree;
+            
+
         }
-        public Product(ProductDTO d)
+        public ProductDTO()
         {
-            Name = d.Name;
-            Description = d.Description;
-            Price = d.Price;
-            Quantity = d.Quantity;
-            Id = d.Id;
-            Discount = d.Discount;
-            IsBuyOneGetOneFree = d.IsBuyOneGetOneFree;
+
         }
     }
 }

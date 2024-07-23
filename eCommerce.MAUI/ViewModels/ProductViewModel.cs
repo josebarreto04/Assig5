@@ -1,8 +1,11 @@
 ﻿using Amazon.Library.Models;
 using Amazon.Library.Services;
+using eCommerce.Library.DTO;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+
+
 
 
 namespace eCommerce.MAUI.ViewModels
@@ -10,30 +13,7 @@ namespace eCommerce.MAUI.ViewModels
 
     public class ProductViewModel : INotifyPropertyChanged
     {
-        private Product? product;
-        public Product? Product
-        {
-            get { return product; }
-            set
-            {
-                if (product != value)
-                {
-                    product = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(Name));
-                    NotifyPropertyChanged(nameof(Description));
-                    NotifyPropertyChanged(nameof(Id));
-                    NotifyPropertyChanged(nameof(Quantity));
-                    NotifyPropertyChanged(nameof(DisplayPrice));
-                    NotifyPropertyChanged(nameof(PriceAsString));
-                    NotifyPropertyChanged(nameof(IsBuyOneGetOneFree));
-                    NotifyPropertyChanged(nameof(Discount));
-
-
-
-                }
-            }
-        }
+        public ProductDTO? Product {  get; set; }
         public bool IsBuyOneGetOneFree
         {
             get { return Product?.IsBuyOneGetOneFree ?? false; }
@@ -128,25 +108,31 @@ namespace eCommerce.MAUI.ViewModels
             }
         }
         public ICommand? EditCommand { get; private set; }
-        public ICommand? AddCommand { get; private set; }
-
+        public ICommand? ApplyDiscountCommand { get; private set; }
         public ICommand? DeleteCommand { get; private set; }
 
         public ProductViewModel()
         {
-            Product = new Product();
+            Product = new ProductDTO();
             SetupCommands();
         }
-        public ProductViewModel(int id)
+        public ProductViewModel(int productId = 0)
         {
-            Product = InventoryServiceProxy.Current?.Products?.FirstOrDefault(p => p.Id == id);
-
-            SetupCommands();
+            if (productId == 0)
+            {
+                Product = new ProductDTO();
+            }
+            else
+            {
+               Product = InventoryServiceProxy
+                    .Current
+                    .Products.FirstOrDefault(p => p.Id == productId)
+                    ?? new ProductDTO();
+            }
         }
-        public ProductViewModel(Product p)
+        public ProductViewModel(ProductDTO p)
         {
-
-            Product = p ?? new Product();
+            Product = p;
             SetupCommands();
         }
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -162,15 +148,7 @@ namespace eCommerce.MAUI.ViewModels
             }
             Shell.Current.GoToAsync($"//Product?ProductId={p.Product.Id}");
         }
-        private void ExecuteAdd(ProductViewModel? p)
-        {
-            if (p?.Product == null)
-            {
-                return;
-            }
-            ShoppingCartService.Current.AddToCart(p.Product);
-            NotifyPropertyChanged(nameof(Product));
-        }
+      
         private void ExecuteDelete(ProductViewModel? p)
         {
             if (p?.Product == null)
@@ -195,8 +173,8 @@ namespace eCommerce.MAUI.ViewModels
         public void SetupCommands()
         {
             EditCommand = new Command((p) => ExecuteEdit(p as ProductViewModel));
-            AddCommand = new Command((p) => ExecuteAdd(p as ProductViewModel));
-            DeleteCommand = new Command((p) => ExecuteAdd(p as ProductViewModel));
+            DeleteCommand = new Command((p) => ExecuteDelete(p as ProductViewModel));
+            ApplyDiscountCommand = new Command((p) => ApplyMarkDown((p as ProductViewModel)));
 
         }
 
@@ -215,12 +193,13 @@ namespace eCommerce.MAUI.ViewModels
                 }
             }
         }
-        public void Add()
+        public async void Add()
         {
             if (Product != null)
             {
-                InventoryServiceProxy.Current.AddOrUpdate(Product);
+                Product = await InventoryServiceProxy.Current.AddOrUpdate(Product);
             }
+            
         }
 
         public void BuyOneGetOneFree()
@@ -232,25 +211,19 @@ namespace eCommerce.MAUI.ViewModels
 
         }
      
-        public void ApplyMarkDown()
+        private void ApplyMarkDown(ProductViewModel? p)
         {
 
-            if (Product != null)
+            if (p?.Product == null)
             {
-                if (Discount < 0)
-                {
-                    Discount = 0;
-                }
-
-                else if (Discount > 100)
-                {
-                    Discount = 100;
-                }
-                decimal discountedPrice = Product.Price * (1 - (Discount / 100));
-                Product.Price = discountedPrice;
-                NotifyPropertyChanged(nameof(Product)); // Notify changes in the Product object
-                NotifyPropertyChanged(nameof(PriceAsString)); // Notify changes in the price representation
+                return;
             }
+            else if (p?.Discount > 100 || p?.Discount < 1)
+            {
+                return;
+            }
+            InventoryServiceProxy.Current.ApplyMarkdown(p.Product);
+            
         }
     }
 }

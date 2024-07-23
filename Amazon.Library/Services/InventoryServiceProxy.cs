@@ -5,6 +5,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Amazon.Library.Utilities;
+using eCommerce.Library.DTO;
 
 namespace Amazon.Library.Services
 {
@@ -13,16 +16,16 @@ namespace Amazon.Library.Services
         private static InventoryServiceProxy? instance;
         private static object instanceLock = new object();
 
-        private List<Product> products;
+        private List<ProductDTO> products;
 
-        public ReadOnlyCollection<Product> Products
+        public ReadOnlyCollection<ProductDTO> Products
         {
             get
             {
                 return products.AsReadOnly();
             }
         }
-
+       
         private int NextId
         {
             get
@@ -35,47 +38,31 @@ namespace Amazon.Library.Services
                 return products.Select(p => p.Id).Max() + 1;
             }
         }
-
-        public void Delete(int id)
+        public async Task<ProductDTO> Delete(int id)
         {
-            if (products == null)
-            {
-                return;
-            }
-            var itemToDelete = products.FirstOrDefault(i => i.Id == id);
-
-            if (itemToDelete != null)
-            {
-                products.Remove(itemToDelete);
-            }
+           var response = await new WebRequestHandler().Delete($"/{id}");
+           var itemToDelete =JsonConvert.DeserializeObject<ProductDTO>(response);
+           return itemToDelete;
         }
-
-        public Product AddOrUpdate(Product p)
+       
+        public async Task<IEnumerable<ProductDTO>> Get()
         {
-            bool isAdd = false;
-            if(p.Id == 0)
-            {
-                isAdd = true;
-                p.Id = NextId;
-            }
-
-            if(isAdd)
-            {
-                products.Add(p);
-            }
-
-            return p;
+            var result = await new WebRequestHandler().Get("/Inventory");
+            var deserializedResult = JsonConvert.DeserializeObject<List<ProductDTO>>(result);
+            products = deserializedResult.ToList() ?? new List<ProductDTO>();
+            return products;
+        }
+        public async Task<ProductDTO> AddOrUpdate(ProductDTO p)
+        {
+            
+            var result = await new WebRequestHandler().Post("/Inventory", p);
+            return JsonConvert.DeserializeObject<ProductDTO>(result);
         }
 
         private InventoryServiceProxy()
         {
-            //TODO: remove sample data on checkin
-            products = new List<Product>()
-            {
-                new Product{Id = 1,Name = "Apples", Price=1.75M, Quantity=2}
-                , new Product{Id = 2,Name = "Juice", Price=10M, Quantity = 4}
-                , new Product{Id = 3,Name = "Coffee", Price=137.11M, Quantity =10}
-            };
+            var response = new WebRequestHandler().Get("/Inventory").Result;
+            products = JsonConvert.DeserializeObject<List<ProductDTO>>(response);
         }
 
         public static InventoryServiceProxy Current
@@ -91,6 +78,27 @@ namespace Amazon.Library.Services
                 }
                 return instance;
             }
+        }
+        public void ApplyMarkdown(ProductDTO p)
+        {
+            if (p.Discount > 100 || p.Discount < 0)
+            {
+                return;
+            }
+            p.Price = p.Price * (1 - (p.Discount/ 100));
+
+        }
+
+        public async Task<IEnumerable<ProductDTO>> Search(Query? query)
+        {
+            if (query == null || string.IsNullOrEmpty(query.QueryString))
+            {
+                return await Get();
+            }
+
+            var result = await new WebRequestHandler().Post("/Inventory/Search", query);
+            products = JsonConvert.DeserializeObject<List<ProductDTO>>(result) ?? new List<ProductDTO>();
+            return Products;
         }
     }
 }

@@ -11,8 +11,6 @@ public partial class ProductView : ContentPage
 	{
 		InitializeComponent();
 	}
-
-    public Product? SelectedProduct { get; set; }
  
     private void CancelClicked(object sender, EventArgs e)
     {
@@ -21,7 +19,7 @@ public partial class ProductView : ContentPage
    
     private void AddClicked(object sender, EventArgs e)
     {
-        (BindingContext as ProductViewModel)?.Add();
+        (BindingContext as ProductViewModel).Add();
         Shell.Current.GoToAsync("//Inventory");
     }
     private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
@@ -38,7 +36,7 @@ public partial class ProductView : ContentPage
     }
     private void MarkDownClicked(object sender, EventArgs e)
     {
-        (BindingContext as ProductViewModel)?.ApplyMarkDown();
+       
         Shell.Current.GoToAsync("//Inventory");
 
     }

@@ -1,6 +1,6 @@
 ﻿using Amazon.Library.Models;
 using Amazon.Library.Services;
-
+using eCommerce.Library.DTO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -115,14 +115,14 @@ namespace eCommerce.MAUI.ViewModels
         }
 
 
-        public ObservableCollection<Product> CartContent
+        public ObservableCollection<ProductDTO> CartContent
         {
             get
             {
                 return ShoppingCartService.Current.Cart.Contents;
             }
         }
-        public ObservableCollection<Product> CartContent2
+        public ObservableCollection<ProductDTO> CartContent2
         {
             get
             {

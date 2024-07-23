@@ -1,5 +1,6 @@
 ﻿using Amazon.Library.Models;
 using Amazon.Library.Services;
+using eCommerce.Library.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +24,7 @@ namespace Amazon.Library.Services
             {
                 if (carts == null || !carts.Any())
                 {
-                    var newCart = new ShoppingCart() { Id = 1, Contents = new ObservableCollection<Product>() };
+                    var newCart = new ShoppingCart() { Id = 1, Contents = new ObservableCollection<ProductDTO>() };
                     carts.Add(newCart);
                     return newCart;
                 }
@@ -36,7 +37,7 @@ namespace Amazon.Library.Services
             {
                 if (carts2 == null || !carts2.Any())
                 {
-                    var newCart = new ShoppingCart() { Id = 1, Contents2 = new ObservableCollection<Product>() };
+                    var newCart = new ShoppingCart() { Id = 1, Contents2 = new ObservableCollection<ProductDTO>() };
                     carts2.Add(newCart);
                     return newCart;
                 }
@@ -65,7 +66,7 @@ namespace Amazon.Library.Services
             }
         }
 
-        public void AddToCart(Product newProduct)
+        public void AddToCart(ProductDTO newProduct)
         {
             if (newProduct == null) return;
             var existingProduct = Cart.Contents.FirstOrDefault(p => p.Id == newProduct.Id);
@@ -89,7 +90,7 @@ namespace Amazon.Library.Services
             }
 
         }
-        public void AddToCart2(Product newProduct)
+        public void AddToCart2(ProductDTO newProduct)
         {
             if (newProduct == null) return;
             var existingProduct = Cart2.Contents2.FirstOrDefault(p => p.Id == newProduct.Id);
@@ -114,7 +115,7 @@ namespace Amazon.Library.Services
 
         }
 
-        public void DeleteFromCart(Product productToDelete)
+        public void DeleteFromCart(ProductDTO productToDelete)
         {
             if (Cart?.Contents == null)
             {

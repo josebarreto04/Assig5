@@ -1,5 +1,6 @@
 ﻿using Amazon.Library.Models;
 using Amazon.Library.Services;
+using eCommerce.Library.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,10 +10,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+
 namespace eCommerce.MAUI.ViewModels
 {
     public class InventoryViewModel : INotifyPropertyChanged
     {
+        public string? Query { get; set; }
         private ProductViewModel? selectedProduct;
 
         public ProductViewModel? SelectedProduct
@@ -28,35 +31,34 @@ namespace eCommerce.MAUI.ViewModels
             }
         }
 
-        public List<ProductViewModel> Products => InventoryServiceProxy.Current.Products
-            .Where(p => p != null)
-            .Select(p => new ProductViewModel(p))
-            .ToList()
-            ?? new List<ProductViewModel>();
-
-        public void Refresh()
+        public List<ProductViewModel> Products
         {
+            get
+            {
+                return InventoryServiceProxy.Current.Products.Where(p => p != null)
+                    .Select(p => new ProductViewModel(p)).ToList()
+                    ?? new List<ProductViewModel>();
+            }
+        }
+
+        public async void Refresh()
+        {
+            await InventoryServiceProxy.Current.Get();
             NotifyPropertyChanged(nameof(Products));
         }
-
-        public void EditProduct()
+       
+        public async void EditProduct()
         {
             if (SelectedProduct?.Product == null) return;
-            Shell.Current.GoToAsync($"//Product?ProductId={SelectedProduct.Product.Id}");
-            InventoryServiceProxy.Current.AddOrUpdate(SelectedProduct.Product);
-        }
-        public void AddProduct()
-        {
-            var newProduct = new Product();
-            InventoryServiceProxy.Current.AddOrUpdate(newProduct);
-            Shell.Current.GoToAsync($"//Product?ProductId={newProduct.Id}");
+            await Shell.Current.GoToAsync($"//Product?ProductId={SelectedProduct.Product.Id}");
+            await InventoryServiceProxy.Current.AddOrUpdate(SelectedProduct.Product);
             Refresh();
         }
-        public void DeleteProduct()
+        public async void DeleteProduct()
         {
             
                 if (SelectedProduct?.Product == null) return;
-                InventoryServiceProxy.Current.Delete(SelectedProduct.Product.Id);
+                await InventoryServiceProxy.Current.Delete(SelectedProduct.Product.Id);
                 SelectedProduct = null;
                 Refresh();
         }
@@ -65,6 +67,12 @@ namespace eCommerce.MAUI.ViewModels
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public async void SearchProduct()
+        {
+            await InventoryServiceProxy.Current.Search(new Query(Query));
+            NotifyPropertyChanged(nameof(Products));
         }
     }
 }   
